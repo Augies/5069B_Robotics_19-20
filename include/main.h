@@ -62,6 +62,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+void liftIntakes(bool, bool);
+void moveHorizontal(bool, bool);
+void setIntake(bool, bool);
+void setDriveTrain(int, int);
+void tareMotors(void);
 void autonomous(void);
 void initialize(void);
 void disabled(void);
