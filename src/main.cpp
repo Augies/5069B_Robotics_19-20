@@ -10,14 +10,19 @@ pros::Motor IntakeR(6, true);
 pros::Motor IntakeLiftL(7);
 pros::Motor IntakeLiftR(8, true);
 
-#define PortDriveTrainL 1
-#define PortDriveTrainR 2
-#define PortDriveTrainMid 3
-#define PortRampExtender 4
-#define PortIntakeL 5
-#define PortIntakeR 6
-#define PortIntakeLiftL 7
-#define PortIntakeLiftR 8
+// #define PortDriveTrainL 1
+// #define PortDriveTrainR 2
+// #define PortDriveTrainMid 3
+// #define PortRampExtender 4
+// #define PortIntakeL 5
+// #define PortIntakeR 6
+// #define PortIntakeLiftL 7
+// #define PortIntakeLiftR 8
+
+void setDriveTrain(int velocityL, int velocityR){
+	DriveTrainL.move_velocity(velocityL);
+	DriveTrainR.move_velocity(velocityR);
+}
 
 /**
  * A callback function for LLEMU's center button.
@@ -43,8 +48,15 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
+	pros::lcd::set_text(1, "Initializing...");
+	DriveTrainL.tare_position();
+	DriveTrainR.tare_position();
+	DriveTrainMid.tare_position();
+	RampExtender.tare_position();
+	IntakeL.tare_position();
+	IntakeR.tare_position();
+	IntakeLiftL.tare_position();
+	IntakeLiftR.tare_position();
 	pros::lcd::register_btn1_cb(on_center_button);
 }
 
@@ -93,15 +105,9 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(CONTROLLER_MASTER);
-	//pros::Motor DriveTrainL(PortDriveTrainL);
-	pros::Motor DriveTrainR(PortDriveTrainR, true);
-
 
 	while (true) {
-		int forwardvel = (master.get_analog(ANALOG_LEFT_Y)+master.get_analog(ANALOG_RIGHT_Y))/2;
-		DriveTrainL = forwardvel;
-		DriveTrainR = forwardvel;
-		pros::delay(20);
+		setDriveTrain(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+
 	}
 }
