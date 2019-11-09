@@ -1,4 +1,11 @@
 #include "main.h"
+#include "utils.cpp"
+
+//Says if an intake has been pressed.
+//Used to ensure that intake and lift motors are stopped at their position.
+bool intakeLiftPressed = false;
+bool intakePressed = false;
+bool rampPressed = false;
 
 pros::Controller controller(CONTROLLER_MASTER);
 pros::Motor DriveTrainL(1);
@@ -50,7 +57,10 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
-	controller.print(0, 0, "Bot is currently disabled.");
+	tareMotors();
+	DriveTrainL.move_velocity(0);
+	DriveTrainR.move_velocity(0);
+	controller.print(0, 0, "Disabled.");
 }
 
 /**
@@ -64,12 +74,15 @@ void setIntake(bool isL1Pressed, bool isR1Pressed){
 		if(isL1Pressed){
 			IntakeL.move_velocity(-127);
 			IntakeR.move_velocity(-127);
+			intakePressed = true;
 		}else if(isR1Pressed){
 			IntakeL.move_velocity(127);
 			IntakeR.move_velocity(127);
-		}else{
-			IntakeL.move_velocity(0);
-			IntakeR.move_velocity(0);
+			intakePressed = true;
+		}else if(intakePressed){
+			IntakeL.move_absolute(IntakeL.get_position(), 40);
+			IntakeR.move_absolute(IntakeR.get_position(), 40);
+			intakePressed = false;
 		}
 	}
 }
@@ -79,22 +92,36 @@ void setIntake(bool isL1Pressed, bool isR1Pressed){
  */
 // const int heights[] = {0,20,40,60,80,100,120,140,160};
 // int heightIndex = 0;
-void liftIntakes(bool upPressed, bool downPressed){
-	if(!(upPressed && downPressed)){
-		if(upPressed /*&& heightIndex<sizeof(heights)-1*/){
-			IntakeLiftL.move_velocity(127);
-			IntakeLiftR.move_velocity(127);
-			// heightIndex++;
-			// pros::delay(60);
-			// IntakeLiftL.move_absolute(heights[heightIndex], 127);
-			// IntakeLiftR.move_absolute(heights[heightIndex], 127);
-		}else if(downPressed /*&& heightIndex>0*/){
-			IntakeLiftL.move_velocity(-127);
-			IntakeLiftR.move_velocity(-127);
-			// heightIndex--;
-			// pros::delay(60);
-			// IntakeLiftL.move_absolute(heights[heightIndex], 127);
-			// IntakeLiftR.move_absolute(heights[heightIndex], 127);
+// void liftIntakes(bool upPressed, bool downPressed){
+// 	if(!(upPressed && downPressed)){
+// 		if(upPressed){
+// 			IntakeLiftL.move_velocity(127);
+// 			IntakeLiftR.move_velocity(127);
+// 			intakeLiftPressed = true;
+// 		}else if(downPressed){
+// 			IntakeLiftL.move_velocity(-127);
+// 			IntakeLiftR.move_velocity(-127);
+// 			intakeLiftPressed = true;
+// 		}else if(intakeLiftPressed){
+// 			IntakeLiftR.move_absolute(IntakeLiftR.get_position(), 40);
+// 			IntakeLiftL.move_absolute(IntakeLiftL.get_position(), 40);
+// 			intakeLiftPressed = false;
+// 		}
+// 	}
+// }
+int heights[] = {40,80,120,160,200,240,280,320};
+int heightIndex = 0;
+void liftIntakes(bool up, bool down){
+	if(!(up&&down)){
+		if(up&&heightIndex<sizeof(heights)){
+			heightIndex++;
+			IntakeLiftL.move_absolute(heights[heightIndex], 127);
+			IntakeLiftR.move_absolute(heights[heightIndex], 127);
+		}
+		if(down&&heightIndex>0){
+			heightIndex--;
+			IntakeLiftL.move_absolute(heights[heightIndex], 127);
+			IntakeLiftR.move_absolute(heights[heightIndex], 127);
 		}
 	}
 }
@@ -136,10 +163,13 @@ void moveRamp(bool isLPressed, bool isRPressed){
 	if(!(isLPressed&&isRPressed)){
 		if(isLPressed){
 			RampExtender.move_velocity(-127);
+			rampPressed = true;
 		}else if(isRPressed){
 			RampExtender.move_velocity(127);
-		}else{
-			RampExtender.move_velocity(0);
+			rampPressed = true;
+		}else if(rampPressed){
+			RampExtender.move_absolute(RampExtender.get_position(), 40);
+			rampPressed = false;
 		}
 	}
 }
@@ -155,7 +185,26 @@ void moveRamp(bool isLPressed, bool isRPressed){
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	//ramp forwards
+	//lift up
+	RampExtender.move_velocity(127);
+	pros::delay(1250);
+	IntakeLiftL.move_velocity(80);
+	IntakeLiftR.move_velocity(80);
+	pros::delay(2750);
+	RampExtender.move_velocity(-127);
+	pros::delay(1000);
+	RampExtender.move_velocity(0);
+	IntakeLiftL.move_velocity(-127);
+	IntakeLiftR.move_velocity(-127);
+	pros::delay(2000);
+	DriveTrainL.move_velocity(64);
+	DriveTrainR.move_velocity(64);
+	pros::delay(2000);
+	DriveTrainL.move_velocity(-64);
+	DriveTrainR.move_velocity(-64);
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -183,9 +232,13 @@ void opcontrol() {
 		moveHorizontal(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2), controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2));
 
 		//Lifting the intake in increments
-		liftIntakes(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP), controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN));
+		liftIntakes(
+			onUpRelease(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)),
+			onDownRelease(controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)));
 
 		//Moving the ramp forwards and backwards
 		moveRamp(controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT), controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT));
+
+		pros::delay(10);
 	}
 }
