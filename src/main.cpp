@@ -1,11 +1,4 @@
 #include "main.h"
-#include "utils.cpp"
-
-//Says if an intake has been pressed.
-//Used to ensure that intake and lift motors are stopped at their position.
-bool intakeLiftPressed = false;
-bool intakePressed = false;
-bool rampPressed = false;
 
 pros::Controller controller(CONTROLLER_MASTER);
 pros::Motor DriveTrainL(1);
@@ -16,6 +9,10 @@ pros::Motor IntakeL(5);
 pros::Motor IntakeR(6, true);
 pros::Motor IntakeLiftL(7);
 pros::Motor IntakeLiftR(8, true);
+
+bool moveRampRelease = false;
+bool setIntakeRelease = false;
+bool liftIntakeRelease = false;
 
 /**
  * Controls the Drive Train for the bot with a left and right velocity.
@@ -74,15 +71,15 @@ void setIntake(bool isL1Pressed, bool isR1Pressed){
 		if(isL1Pressed){
 			IntakeL.move_velocity(-127);
 			IntakeR.move_velocity(-127);
-			intakePressed = true;
+			setIntakeRelease = true;
 		}else if(isR1Pressed){
 			IntakeL.move_velocity(127);
 			IntakeR.move_velocity(127);
-			intakePressed = true;
-		}else if(intakePressed){
+			setIntakeRelease = true;
+		}else if(setIntakeRelease){
 			IntakeL.move_absolute(IntakeL.get_position(), 40);
 			IntakeR.move_absolute(IntakeR.get_position(), 40);
-			intakePressed = false;
+			setIntakeRelease = false;
 		}
 	}
 }
@@ -90,42 +87,25 @@ void setIntake(bool isL1Pressed, bool isR1Pressed){
 /**
  * Controls the lifting/lowering of the intakes in order to move cubes upwards.
  */
-// const int heights[] = {0,20,40,60,80,100,120,140,160};
-// int heightIndex = 0;
-// void liftIntakes(bool upPressed, bool downPressed){
-// 	if(!(upPressed && downPressed)){
-// 		if(upPressed){
-// 			IntakeLiftL.move_velocity(127);
-// 			IntakeLiftR.move_velocity(127);
-// 			intakeLiftPressed = true;
-// 		}else if(downPressed){
-// 			IntakeLiftL.move_velocity(-127);
-// 			IntakeLiftR.move_velocity(-127);
-// 			intakeLiftPressed = true;
-// 		}else if(intakeLiftPressed){
-// 			IntakeLiftR.move_absolute(IntakeLiftR.get_position(), 40);
-// 			IntakeLiftL.move_absolute(IntakeLiftL.get_position(), 40);
-// 			intakeLiftPressed = false;
-// 		}
-// 	}
-// }
 int heights[] = {40,80,120,160,200,240,280,320};
 int heightIndex = 0;
 void liftIntakes(bool up, bool down){
 	if(!(up&&down)){
-		if(up&&heightIndex<sizeof(heights)){
+		if(up&&heightIndex<sizeof(heights)&&!liftIntakeRelease){
 			heightIndex++;
 			IntakeLiftL.move_absolute(heights[heightIndex], 127);
 			IntakeLiftR.move_absolute(heights[heightIndex], 127);
-		}
-		if(down&&heightIndex>0){
+			liftIntakeRelease = true;
+		}else if(down&&heightIndex>0&&liftIntakeRelease){
 			heightIndex--;
 			IntakeLiftL.move_absolute(heights[heightIndex], 127);
 			IntakeLiftR.move_absolute(heights[heightIndex], 127);
+			liftIntakeRelease = true;
+		}else{
+			liftIntakeRelease = false;
 		}
 	}
 }
-
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
  * Management System or the VEX Competition Switch. This is intended for
@@ -163,13 +143,13 @@ void moveRamp(bool isLPressed, bool isRPressed){
 	if(!(isLPressed&&isRPressed)){
 		if(isLPressed){
 			RampExtender.move_velocity(-127);
-			rampPressed = true;
+			moveRampRelease = true;
 		}else if(isRPressed){
 			RampExtender.move_velocity(127);
-			rampPressed = true;
-		}else if(rampPressed){
+			moveRampRelease = true;
+		}else if(moveRampRelease){
 			RampExtender.move_absolute(RampExtender.get_position(), 40);
-			rampPressed = false;
+			moveRampRelease = false;
 		}
 	}
 }
@@ -232,9 +212,7 @@ void opcontrol() {
 		moveHorizontal(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2), controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2));
 
 		//Lifting the intake in increments
-		liftIntakes(
-			onUpRelease(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)),
-			onDownRelease(controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)));
+		liftIntakes(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP),controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN));
 
 		//Moving the ramp forwards and backwards
 		moveRamp(controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT), controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT));
