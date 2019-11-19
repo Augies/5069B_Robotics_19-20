@@ -1,4 +1,4 @@
-#include "main.h"
+#include "../include/main.h"
 
 pros::Controller controller(CONTROLLER_MASTER);
 pros::Motor DriveTrainL(1);
