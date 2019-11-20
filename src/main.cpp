@@ -1,3 +1,8 @@
+/**
+ * Program for 5096B Robotics Team in Tower Takeover
+ * Has basic autonomous and driver control in Vex PROS
+ * @author Augie S., Andrew L.
+ */
 #include "../include/main.h"
 
 pros::Controller controller(CONTROLLER_MASTER);
