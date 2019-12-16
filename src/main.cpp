@@ -74,12 +74,12 @@ void disabled() {
 void setIntake(bool isL1Pressed, bool isR1Pressed){
 	if(!(isL1Pressed&&isR1Pressed)){
 		if(isL1Pressed){
-			IntakeL.move_velocity(-127);
-			IntakeR.move_velocity(-127);
+			IntakeL.move_velocity(-255);
+			IntakeR.move_velocity(-255);
 			setIntakeRelease = true;
 		}else if(isR1Pressed){
-			IntakeL.move_velocity(127);
-			IntakeR.move_velocity(127);
+			IntakeL.move_velocity(255);
+			IntakeR.move_velocity(255);
 			setIntakeRelease = true;
 		}else if(setIntakeRelease){
 			IntakeL.move_absolute(IntakeL.get_position(), 40);
@@ -92,22 +92,35 @@ void setIntake(bool isL1Pressed, bool isR1Pressed){
 /**
  * Controls the lifting/lowering of the intakes in order to move cubes upwards.
  */
-int heights[] = {40,80,120,160,200,240,280,320};
-int heightIndex = 0;
+// int heights[] = {40,80,120,160,200,240,280,320};
+// int heightIndex = 0;
 void liftIntakes(bool up, bool down){
+	// if(!(up&&down)){
+	// 	if(up&&heightIndex<sizeof(heights)&&!liftIntakeRelease){
+	// 		heightIndex++;
+	// 		IntakeLiftL.move_absolute(heights[heightIndex], 127);
+	// 		IntakeLiftR.move_absolute(heights[heightIndex], 127);
+	// 		liftIntakeRelease = true;
+	// 	}else if(down&&heightIndex>0&&liftIntakeRelease){
+	// 		heightIndex--;
+	// 		IntakeLiftL.move_absolute(heights[heightIndex], 127);
+	// 		IntakeLiftR.move_absolute(heights[heightIndex], 127);
+	// 		liftIntakeRelease = true;
+	// 	}else{
+	// 		liftIntakeRelease = false;
+	// 	}
+	// }
 	if(!(up&&down)){
-		if(up&&heightIndex<sizeof(heights)&&!liftIntakeRelease){
-			heightIndex++;
-			IntakeLiftL.move_absolute(heights[heightIndex], 127);
-			IntakeLiftR.move_absolute(heights[heightIndex], 127);
-			liftIntakeRelease = true;
-		}else if(down&&heightIndex>0&&liftIntakeRelease){
-			heightIndex--;
-			IntakeLiftL.move_absolute(heights[heightIndex], 127);
-			IntakeLiftR.move_absolute(heights[heightIndex], 127);
-			liftIntakeRelease = true;
+		if(up&&!liftIntakeRelease){
+			IntakeLiftL.move_velocity(127);
+			IntakeLiftR.move_velocity(127);
+		}else if(down && !liftIntakeRelease){
+			IntakeLiftR.move_velocity(-127);
+			IntakeLiftL.move_velocity(-127);
 		}else{
 			liftIntakeRelease = false;
+			IntakeLiftL.move_absolute(IntakeLiftL.get_position(), 127);
+			IntakeLiftR.move_absolute(IntakeLiftR.get_position(), 127);
 		}
 	}
 }
@@ -171,24 +184,36 @@ void moveRamp(bool isLPressed, bool isRPressed){
  * from where it left off.
  */
 void autonomous() {
+	//TODO This needs done in time for February's competition. If confused, ask me about it - Augie
 	//ramp forwards
-	//lift up
-	RampExtender.move_velocity(127);
-	pros::delay(1250);
-	IntakeLiftL.move_velocity(80);
-	IntakeLiftR.move_velocity(80);
-	pros::delay(2750);
-	RampExtender.move_velocity(-127);
-	pros::delay(1000);
-	RampExtender.move_velocity(0);
-	IntakeLiftL.move_velocity(-127);
-	IntakeLiftR.move_velocity(-127);
-	pros::delay(2000);
-	DriveTrainL.move_velocity(64);
-	DriveTrainR.move_velocity(64);
-	pros::delay(2000);
-	DriveTrainL.move_velocity(-64);
-	DriveTrainR.move_velocity(-64);
+	// DriveTrainL.move_velocity(127);
+	// DriveTrainR.move_velocity(127);
+	// pros::delay(1000);
+	// DriveTrainL.move_velocity(0);
+	// DriveTrainR.move_velocity(0);
+	// RampExtender.move_absolute(650, 127);
+	// pros::delay(1500);
+	// DriveTrainL.move_velocity(-127);
+	// DriveTrainR.move_velocity(-127);
+	// pros::delay(1000);
+	// DriveTrainL.move_velocity(0);
+	// DriveTrainR.move_velocity(0);
+	// RampExtender.move_absolute(0, -127);
+	// pros::delay(1500);
+	// RampExtender.move_velocity(0);
+
+	// RampExtender.move_velocity(127);
+	// pros::delay(1000);
+	// RampExtender.move_velocity(-127);
+	// pros::delay(1000);
+	// IntakeLiftL.move_velocity(127);
+	// IntakeLiftR.move_velocity(127);
+	// pros::delay(1000);
+	// IntakeLiftR.move_velocity(-127);
+	// IntakeLiftL.move_velocity(-127);
+	// pros::delay(1000);
+	// IntakeLiftL.move_velocity(0);
+	// IntakeLiftR.move_velocity(0);
 }
 
 /**
@@ -208,19 +233,34 @@ void opcontrol() {
 	tareMotors();
 	while (true) {
 		//Tank Mode
-		setDriveTrain(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y));
+		setDriveTrain(
+			controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y),
+			controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)
+		);
 
 		//Buttons L1 and R1 for Controlling the Intake
-		setIntake(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1), controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1));
+		setIntake(
+			controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1),
+			controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)
+		);
 
 		//Buttons L2 and R2 for Controlling the Horizontal Translation of the bot
-		moveHorizontal(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2), controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2));
+		moveHorizontal(
+			controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2),
+			controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)
+		);
 
 		//Lifting the intake in increments
-		liftIntakes(controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP),controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN));
+		liftIntakes(
+			controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP),
+			controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)
+		);
 
 		//Moving the ramp forwards and backwards
-		moveRamp(controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT), controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT));
+		moveRamp(
+			controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT),
+			controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)
+		);
 
 		pros::delay(10);
 	}
