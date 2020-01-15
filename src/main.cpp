@@ -5,6 +5,9 @@
  */
 #include "../include/main.h"
 
+double intakeLiftRPos = 0;
+double intakeLiftLPos = 0;
+
 pros::Controller controller(CONTROLLER_MASTER);
 pros::Motor DriveTrainL(1);
 pros::Motor DriveTrainR(2, true);
@@ -111,16 +114,23 @@ void liftIntakes(bool up, bool down){
 	// 	}
 	// }
 	if(!(up&&down)){
-		if(up&&!liftIntakeRelease){
+		if(up){
 			IntakeLiftL.move_velocity(127);
 			IntakeLiftR.move_velocity(127);
-		}else if(down && !liftIntakeRelease){
+			liftIntakeRelease = true;
+		}else if(down){
 			IntakeLiftR.move_velocity(-127);
 			IntakeLiftL.move_velocity(-127);
-		}else{
+			liftIntakeRelease = true;
+		}else if(liftIntakeRelease){
+			intakeLiftLPos = IntakeLiftL.get_position();
+			intakeLiftRPos = IntakeLiftR.get_position();
 			liftIntakeRelease = false;
-			IntakeLiftL.move_absolute(IntakeLiftL.get_position(), 127);
-			IntakeLiftR.move_absolute(IntakeLiftR.get_position(), 127);
+			IntakeLiftL.move_absolute(intakeLiftLPos, 127);
+			IntakeLiftR.move_absolute(intakeLiftRPos, 127);
+		}else{
+			IntakeLiftR.move_absolute(intakeLiftRPos, 127);
+			IntakeLiftL.move_absolute(intakeLiftLPos, 127);
 		}
 	}
 }
