@@ -22,6 +22,18 @@ bool moveRampRelease = false;
 bool setIntakeRelease = false;
 bool liftIntakeRelease = false;
 
+bool brelease = false;
+void toBasePosition(bool b){
+	if(b && !brelease){
+		intakeLiftLPos = 50;
+		intakeLiftRPos = 50;
+		RampExtender.move_absolute(225, 127);
+		brelease = true;
+	}else if(brelease){
+		brelease = false;
+	}
+}
+
 /**
  * Controls the Drive Train for the bot with a left and right velocity.
  */
@@ -115,6 +127,9 @@ void liftIntakes(bool up, bool down){
 	// }
 	if(!(up&&down)){
 		if(up){
+			if(RampExtender.get_position()<600 && IntakeLiftL.get_position()>=600){
+				RampExtender.move_absolute(600, 127);
+			}
 			IntakeLiftL.move_velocity(127);
 			IntakeLiftR.move_velocity(127);
 			liftIntakeRelease = true;
@@ -271,6 +286,15 @@ void opcontrol() {
 			controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT),
 			controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)
 		);
+
+		toBasePosition(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B));
+
+		controller.print(0, 0, "ILL Pos: %d" ,IntakeLiftL.get_position());
+		controller.print(0,1,"ILR Pos: %d", IntakeLiftR.get_position());
+		controller.print(1,0, "RE Pos: %d", RampExtender.get_position());
+		pros::lcd::set_text(1, std::to_string(IntakeLiftL.get_position()));
+		pros::lcd::set_text(2, std::to_string(IntakeLiftR.get_position()));
+		pros::lcd::set_text(3, std::to_string(RampExtender.get_position()));
 
 		pros::delay(10);
 	}
