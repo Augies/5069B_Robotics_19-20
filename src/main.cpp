@@ -244,6 +244,7 @@ void autonomous() {
 	pros::delay(1600);
 	DriveTrainL.move_absolute(0, 127);
 	DriveTrainR.move_absolute(0, 127);
+	DriveTrainL.move_absolute(0,128);
 }
 
 /**
