@@ -62,6 +62,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+void toBasePosition(bool);
 void liftIntakes(bool, bool);
 void moveHorizontal(bool, bool);
 void setIntake(bool, bool);
