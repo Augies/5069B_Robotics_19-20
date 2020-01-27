@@ -239,6 +239,11 @@ void autonomous() {
 	// pros::delay(1000);
 	// IntakeLiftL.move_velocity(0);
 	// IntakeLiftR.move_velocity(0);
+	DriveTrainL.move_absolute(715, 127);
+	DriveTrainR.move_absolute(715, 127);
+	pros::delay(1600);
+	DriveTrainL.move_absolute(0, 127);
+	DriveTrainR.move_absolute(0, 127);
 }
 
 /**
@@ -288,14 +293,9 @@ void opcontrol() {
 		);
 
 		toBasePosition(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B));
-
-		controller.print(0, 0, "ILL Pos: %d" ,IntakeLiftL.get_position());
-		controller.print(0,1,"ILR Pos: %d", IntakeLiftR.get_position());
-		controller.print(1,0, "RE Pos: %d", RampExtender.get_position());
-		pros::lcd::set_text(1, std::to_string(IntakeLiftL.get_position()));
-		pros::lcd::set_text(2, std::to_string(IntakeLiftR.get_position()));
-		pros::lcd::set_text(3, std::to_string(RampExtender.get_position()));
-
+		pros::lcd::set_text(1, std::to_string(DriveTrainL.get_position()));
+		pros::lcd::set_text(2, std::to_string(DriveTrainR.get_position()));
 		pros::delay(10);
+
 	}
 }
