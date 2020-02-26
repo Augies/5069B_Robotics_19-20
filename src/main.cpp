@@ -1,7 +1,7 @@
 /**
  * Program for 5096B Robotics Team in Tower Takeover
  * Has basic autonomous and driver control in Vex PROS
- * @author Augie S., Andrew L.
+ * @author Augie S., Andrew L., Patrick S.
  */
 #include "../include/main.h"
 
@@ -239,11 +239,112 @@ void autonomous() {
 	// pros::delay(1000);
 	// IntakeLiftL.move_velocity(0);
 	// IntakeLiftR.move_velocity(0);
+	// 	• Extend intake
+	// • Go forward while moving in intake
+	// • Keep the intake moving after the bot stops moving forward
+	// • Intake lock?
+	// • Go backward (amount of shaft rotations)
+	// • 90 degree turn to the left
+	// • Any turns necessary to come at the corner correctly
+	// • Once aligned with the corner push the ramp forward
+  // Drive backward a small amount
+<<<<<<< HEAD
+  //IntakeLiftL.move(500, 127);
+	//IntakeLiftR.move_absolute(500, 127);
+	//pros::delay(50);
+	//IntakeLiftL.move_absolute(0, 127);
+	//IntakeLiftR.move_absolute(0, 127);
+	//pros::delay(50);
+	//DriveTrainL.move_absolute(715, 127);
+	//DriveTrainR.move_absolute(715, 127);
+	//IntakeL.move_absolute(1500, 127);
+	//IntakeR.move_absolute(1500, 127);
+	//pros::delay(50);
+	//DriveTrainL.move_absolute(0, 127);
+	//DriveTrainR.move_absolute(0, 127);
+	//pros::delay(50);
+	//DriveTrainL.move_absolute(350, 127);
+	//DriveTrainR.move_absolute(350, 127);
+	//pros::delay(50);
+	//RampExtender.move_absolute(200,127);
+	//pros::delay(50);
+	//DriveTrainL.move_absolute(-100, 50);
+	//DriveTrainR.move_velocity(50);
+	//pros::delay(200);
+	IntakeLiftL.move_velocity(127);
+	IntakeLiftR.move_velocity(127);
+	pros::delay(1000);
+	IntakeLiftL.move_velocity(-127);
+	IntakeLiftR.move_velocity(-127);
+	pros::delay(1000);
+	IntakeLiftL.move_velocity(-127);
+	IntakeLiftR.move_velocity(-127);
+	DriveTrainL.move_velocity(110);
+	DriveTrainR.move_velocity(110);
+	IntakeL.move_velocity(127);
+ pros::delay(500);
+	DriveTrainL.move_velocity(40);
+	DriveTrainR.move_velocity(40);
+	IntakeL.move_velocity(127);
+	IntakeR.move_velocity(127);
+	pros::delay(2250);
+	DriveTrainL.move_velocity(20);
+	DriveTrainR.move_velocity(20);
+	IntakeL.move_velocity(127);
+	IntakeR.move_velocity(127);
+	pros::delay(1000);
+	IntakeL.move_velocity(127);
+	IntakeR.move_velocity(127);
+	DriveTrainL.move_velocity(-100);
+	DriveTrainR.move_velocity(-100);
+	pros::delay(1000);
+	IntakeL.move_velocity(120);
+	IntakeR.move_velocity(120);
+	pros::delay(500);
+	IntakeL.move_velocity(-40);
+	IntakeR.move_velocity(-40);
+	pros::delay(100);
+	//NEXT TWO LINES IS RED/BLUE DEPENDANT
+	//CURRENT FLAG: BLUE
+	DriveTrainL.move_velocity(127);
+	DriveTrainR.move_velocity(-50);
+	//END OF DEPENDANT LINES
+	IntakeL.move_velocity(-80);
+	IntakeR.move_velocity(-80);
+	pros::delay(50);
+	IntakeL.move_velocity(0);
+	IntakeR.move_velocity(0);
+	DriveTrainL.move_velocity(127);
+	DriveTrainR.move_velocity(127);
+	pros::delay(2250);
+	DriveTrainL.move_velocity(0);
+	DriveTrainR.move_velocity(0);
+	pros::delay(250);
+  RampExtender.move_velocity(100);
+	pros::delay(1000);
+	RampExtender.move_velocity(70);
+	pros::delay(1250);
+	RampExtender.move_velocity(20);
+	pros::delay(500);
+	RampExtender.move_velocity(0);
+	DriveTrainL.move_velocity(30);
+	DriveTrainR.move_velocity(30);
+	pros::delay(500);
+	DriveTrainL.move_velocity(-127);
+	DriveTrainR.move_velocity(-127);
+	RampExtender.move_velocity(-127);
+	pros::delay(1000);
+	DriveTrainL.move_velocity(0);
+	DriveTrainR.move_velocity(0);
+	RampExtender.move_velocity(0);
+	pros::delay(0);
+=======
 	DriveTrainL.move_absolute(715, 127);
 	DriveTrainR.move_absolute(715, 127);
 	pros::delay(1600);
 	DriveTrainL.move_absolute(0, 127);
 	DriveTrainR.move_absolute(0, 127);
+>>>>>>> 1f0b9b668263e47c117919bc2f9d5de644666c83
 }
 
 /**

@@ -1,7 +1,7 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "Robotics",
+        "project_name": "5069B Red Side",
         "target": "v5",
         "templates": {
             "kernel": {
