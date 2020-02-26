@@ -248,7 +248,6 @@ void autonomous() {
 	// • Any turns necessary to come at the corner correctly
 	// • Once aligned with the corner push the ramp forward
   // Drive backward a small amount
-<<<<<<< HEAD
   //IntakeLiftL.move(500, 127);
 	//IntakeLiftR.move_absolute(500, 127);
 	//pros::delay(50);
@@ -338,13 +337,11 @@ void autonomous() {
 	DriveTrainR.move_velocity(0);
 	RampExtender.move_velocity(0);
 	pros::delay(0);
-=======
-	DriveTrainL.move_absolute(715, 127);
-	DriveTrainR.move_absolute(715, 127);
-	pros::delay(1600);
-	DriveTrainL.move_absolute(0, 127);
-	DriveTrainR.move_absolute(0, 127);
->>>>>>> 1f0b9b668263e47c117919bc2f9d5de644666c83
+	// DriveTrainL.move_absolute(715, 127);
+	// DriveTrainR.move_absolute(715, 127);
+	// pros::delay(1600);
+	// DriveTrainL.move_absolute(0, 127);
+	// DriveTrainR.move_absolute(0, 127);
 }
 
 /**
