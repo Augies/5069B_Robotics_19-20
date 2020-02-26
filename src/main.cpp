@@ -328,7 +328,7 @@ void autonomous() {
 	RampExtender.move_velocity(0);
 	DriveTrainL.move_velocity(30);
 	DriveTrainR.move_velocity(30);
-	pros::delay(500);
+	pros::delay(500); 
 	DriveTrainL.move_velocity(-127);
 	DriveTrainR.move_velocity(-127);
 	RampExtender.move_velocity(-127);
